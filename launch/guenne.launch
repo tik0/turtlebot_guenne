@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find turtlebot_guenne)/launch/navigation_kindergarden.launch"/>
+  <include file="$(find turtlebot_teleop)/launch/logitech.launch"/>
+
+</launch>
