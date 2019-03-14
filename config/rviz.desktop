@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=RViz
+Comment=ROS visualization
+Exec=bash -i -c rviz
+Terminal=false
+Type=Application
+Icon=/opt/ros/kinetic/share/rviz/icons/package.png 
