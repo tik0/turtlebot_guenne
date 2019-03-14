@@ -14,8 +14,7 @@ if __name__ == '__main__':
     cmd_twist.linear.x = 0.2
     cmd_twist.angular.z = 0.7
 
-    r = rospy.Rate(10)  
-
-    while not rospy.is_shutdown()      
-        pub.publish(cmd_twist)
+    r = rospy.Rate(10)
+    while not rospy.is_shutdown():
+        cmd_vel.publish(cmd_twist)
         r.sleep()
