@@ -3,4 +3,6 @@
   <include file="$(find turtlebot_guenne)/launch/guenne.launch">
     <arg name="map" value="$(find turtlebot_guenne)/maps/kindergarden_map_edit.yaml"/>
   </include>
+
+  <node name="score_observed_robots" pkg="turtlebot_guenne" type="score_observed_robots.py" />
 </launch>
