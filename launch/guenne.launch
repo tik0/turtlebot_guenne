@@ -1,7 +1,37 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="map" />
 
-  <include file="$(find turtlebot_guenne)/launch/navigation_kindergarden.launch"/>
-  <include file="$(find turtlebot_teleop)/launch/logitech.launch"/>
+  <!-- robot -->
+  <include file="$(find tams_turtlebot_bringup)/launch/tams_turtlebot.launch" />
+
+  <!-- apriltag detection -->
+  <include file="$(find tams_turtlebot_bringup)/launch/tams_turtlebots_apriltags2.launch" />
+
+  <!-- competition game client -->
+  <node pkg="rpc_game_client" name="$(anon game_client)" type="game_client.py" output="screen" />
+
+  <!-- multi-master to communicate with game server -->
+  <node name="$(anon master_discovery)" pkg="master_discovery_fkie" type="master_discovery" output="log">
+    <rosparam param="robot_hosts">
+- donny
+- mikey
+- leo
+- raph
+- splinter
+</rosparam>
+  </node>
+  <node name="$(anon master_sync)" pkg="master_sync_fkie" type="master_sync">
+    <rosparam param="sync_services">['/rpc_score_master']</rosparam>
+    <rosparam param="sync_topics">
+- /rpc_game/alive
+- /rpc_game/gamestate
+- /rpc_game/submissions
+    </rosparam>
+  </node>
+
+  <include file="$(find tams_turtlebot_navigation)/launch/navigation.launch">
+    <arg name="map" value="$(arg map)" />
+  </include>
 
 </launch>

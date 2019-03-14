@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find turtlebot_guenne)/launch/guenne.launch">
+    <arg name="map" value="$(find turtlebot_guenne)/maps/ground_floor_map_edit.yaml"/>
+  </include>
+</launch>
