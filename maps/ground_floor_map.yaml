@@ -1,4 +1,4 @@
-image: /home/robot/ros/src/turtlebot_guenne/maps/groud_floor_map_edit.pgm
+image: ground_floor_map.pgm
 resolution: 0.050000
 origin: [-15.400000, -42.600000, 0.000000]
 negate: 0
