@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+from std_msgs.msg import Header
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 
@@ -14,7 +15,11 @@ cmd_twist = Twist()
 
 
 def scan_callback(msg):
-    print "I received a laser scan from time " + str(msg.header.stamp)
+    # print "I received a laser scan from time " + str(msg.header.stamp)
+    pass
+
+def scored_callback(msg):
+    # print "I scored"
     pass
 
 if __name__ == '__main__':
@@ -22,6 +27,7 @@ if __name__ == '__main__':
     rospy.init_node('behavior')
     cmd_vel = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=1)
     scan_sub = rospy.Subscriber('laser_scan_filtered', LaserScan, scan_callback, queue_size=1)
+    hit_sub = rospy.Subscriber('scored_observation', Header, scored_callback, queue_size=1)
 
     move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     move_base.wait_for_server()
