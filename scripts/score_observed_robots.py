@@ -18,7 +18,7 @@ class Scoring:
 
         image_sub = message_filters.Subscriber('/camera/rgb/image_color/compressed', CompressedImage)
         info_sub = message_filters.Subscriber('/camera/rgb/camera_info', CameraInfo)
-        score_notification = rospy.Publisher("/scored_observation", Header)
+        self.score_notification = rospy.Publisher("/scored_observation", Header)
         apriltag_sub = message_filters.Subscriber("/tag_detections", AprilTagDetectionArray)
         ts = message_filters.TimeSynchronizer([image_sub, info_sub, apriltag_sub], 10)
 
@@ -32,7 +32,7 @@ class Scoring:
             if resp.score.total > 0:
                 header = Header()
                 header.stamp = rospy.get_rostime()
-                score_notification.publish(header)
+                self.score_notification.publish(header)
             self.last_score_time = rospy.get_rostime()
 
             rospy.loginfo("scored: " + str(resp))
