@@ -29,7 +29,7 @@ class Scoring:
         try:
             player_score = rospy.ServiceProxy('rpc_score', PlayerScore)
             resp = player_score(image, camera_info)
-            if resp.total > 0:
+            if resp.score.total > 0:
                 header = Header()
                 header.stamp = rospy.get_rostime()
                 score_notification.publish(header)
