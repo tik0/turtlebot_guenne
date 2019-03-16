@@ -27,8 +27,11 @@
 - /rpc_game/alive
 - /rpc_game/gamestate
 - /rpc_game/submissions
+- /$(env TURTLEBOT_NAME)/pose
     </rosparam>
   </node>
+
+  <node name="pose_relay" pkg="topic_tools" type="throttle" args="messages /amcl_pose 1 /$(env TURTLEBOT_NAME)/pose" />
 
   <include file="$(find tams_turtlebot_navigation)/launch/navigation.launch">
     <arg name="map" value="$(arg map)" />
