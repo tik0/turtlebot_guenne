@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find turtlebot_guenne)/launch/guenne.launch">
+    <arg name="map" value="$(find turtlebot_guenne)/maps/europasaal_edit.yaml"/>
+  </include>
+
+  <node name="score_observed_robots" pkg="turtlebot_guenne" type="score_observed_robots.py" />
+</launch>
