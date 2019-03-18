@@ -45,7 +45,7 @@ def move_to_goal(x, y, goal_pub):
     goal_pose.pose = goal.target_pose.pose
     goal_pose.header.frame_id = 'map'
     goal_pub.publish(goal_pose)
-    
+
     move_base.send_goal(goal)
     move_base.wait_for_result()
 
@@ -89,12 +89,19 @@ def patrol_samples(goal_pub):
 
 
 def sample_goal():
+
+    map_ = "euro"
+
+    if map_ == "euro":
+        return random.randint(-10, 0), random.randint(-1, 6)
+
     rand = random.randint(0, 3)
     if rand == 0:
     	return random.uniform(9, 11), random.uniform(-6, -4)
     if rand == 1:
-        return random.uniform(3, 6), random.uniform(-5, -1) 
-    return random.uniform(-1, 1), random.uniform(-1, 1)
+        return random.uniform(3, 6), random.uniform(-5, -1)
+    if rand == 2:
+        return random.uniform(-1, 1), random.uniform(-1, 1)
 
 
 if __name__ == '__main__':
