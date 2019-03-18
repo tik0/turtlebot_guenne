@@ -13,6 +13,10 @@ import tf
 from actionlib_msgs.msg import GoalStatus
 from random import shuffle
 
+import subprocess
+import rospkg
+import os
+
 # global controllers
 cmd_vel = None
 move_base = None
@@ -43,6 +47,8 @@ def scan_callback(msg):
 
 def scored_callback(msg):
 	# print "I scored"
+        rospack = rospkg.RosPack()
+        subprocess.call(["aplay", os.path.join(rospack.get_path('turtlebot_guenne'), 'media', 'haha.wav')])
 	pass
 
 def follow(angle,z):
