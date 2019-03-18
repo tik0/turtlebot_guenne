@@ -2,7 +2,7 @@
 
 import rospy
 import message_filters
-
+import numpy as np
 from rpc_game_client.srv import PlayerScore
 
 from std_msgs.msg import Header
@@ -40,7 +40,7 @@ class Scoring:
             rospy.logwarn("Failed to score: %s"%e)
 
     def callback(self, image, camera_info, apriltag):
-        if (rospy.get_rostime()-self.last_score_time) >= rospy.Duration(10) and len(apriltag.detections) > 0:
+        if (rospy.get_rostime()-self.last_score_time) >= rospy.Duration(10) and len(apriltag.detections) > 0  and apriltag.detections[0].pose.pose.pose.position.z < 2.5:
             self.send_score_image(image, camera_info)
  
 if __name__ == "__main__":
