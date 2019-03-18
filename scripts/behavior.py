@@ -10,8 +10,8 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from apriltags2_ros.msg import AprilTagDetectionArray
 from math import pi, atan2, log, copysign
 import tf
-from threading import Lock
 from actionlib_msgs.msg import GoalStatus
+from random import shuffle
 
 # global controllers
 cmd_vel = None
@@ -19,10 +19,8 @@ move_base = None
 
 cmd_twist = Twist()
 
-movement_lock = Lock()
-
 tag_angle_threshold = 0.05
-tag_dist_threshold = 0.4
+tag_dist_threshold = 0.8
 tag_lost_angle = 0.1
 is_following = False
 tag_vels=[]
@@ -56,7 +54,7 @@ def follow(angle,z):
 	   cmd_twist.angular.z = -5*angle/pi
 	   
 	if z > tag_dist_threshold:
-		cmd_twist.linear.x=min(0.5,0.8*(z-tag_dist_threshold))
+		cmd_twist.linear.x=min(0.5,3*(z-tag_dist_threshold))
 	else:
 		cmd_twist.angular.z *= 1.5
 		
@@ -64,7 +62,6 @@ def follow(angle,z):
 	return cmd_twist
 
 def tag_callback(msg):
-	#print(msg)
 	global tag_vels
 	global movement_lock
 	global is_following
@@ -84,35 +81,21 @@ def tag_callback(msg):
 				
 		# TODO: What to do now?
 		return
-		
+	
 	last_tag_seen = msg.header.stamp.secs
 	is_following = True
+	
 	print('is following')
-	#with movement_lock:
+	
 	move_base.cancel_all_goals()
-	#move_base.cancel_goal()
 	pos = msg.detections[0].pose.pose.pose.position
 	angle = atan2(pos.x,pos.z)
-	#orientation_quat = [orientation.x, orientation.y, orientation.z, orientation.w]
-	#euler=tf.transformations.euler_from_quaternion(orientation_quat)
-	#print(euler)
-	#new_orientation=tf.transformations.quaternion_from_euler(0.0,0.0,euler[2])
-	#print(new_orientation)
+	
 	cmd_twist=follow(angle,pos.z)
 	cmd_vel.publish(cmd_twist)
-	#if angle > tag_lost_angle or angle < -tag_lost_angle:
 	tag_vels=[]
 	tag_vels.append(angle)
 	tag_vels.append(pos.z)
-#	goal = MoveBaseGoal()
-#	
-#	goal.target_pose.header.frame_id = 'map'
-#	goal.target_pose.pose.orientation.x=new_orientation[0]
-#	goal.target_pose.pose.orientation.y=new_orientation[1]
-#	goal.target_pose.pose.orientation.z=new_orientation[2]
-#	goal.target_pose.pose.orientation.w=new_orientation[3]
-#	move_base.send_goal(goal)
-#	move_base.wait_for_result()
 
 
 def turn_ccw():
@@ -123,8 +106,10 @@ def turn_ccw():
 	
 	r = rospy.Rate(10)
 	while step < 50:
+		if last_tag_seen > rospy.get_time() - 2:
+			break
+			
 		cmd_vel.publish(cmd_twist)
-		#print(step)
 		step += 1
 		
 		if step == 25:
@@ -166,14 +151,9 @@ if __name__ == '__main__':
 
 	rospy.loginfo("Successfully initialized")
 
-	# run in a circle forever
-	#cmd_twist = Twist()
-	#cmd_twist.linear.x = 0.2
-	#cmd_twist.angular.z = 0.7
-
 	r = rospy.Rate(1)
-		#cmd_vel.publish(cmd_twist)
-
+	
+	#kindergarden:
 	path=[(0,-5.75, 0.22), # Stairs
 		  (5.5,-5.0, 2.16), #Left of small corridor
 		  (6.7,-4.1, 2.7), #Look into Mauseloch
@@ -181,10 +161,22 @@ if __name__ == '__main__':
 		  (4.5,-0.7, 0.494), #Middle room
 		  (2.5, -1.5, 6.0), #Look into our room
 		  (-0.53, -0.18, 5.8)] #Drive into our room
-	path = []	  
+	#europasaal:
+	path=[(-7.7, 0.4, 3.14),
+		(-5.7, 2.3, 0.88),
+		(-3.1, 2.54, 3.24),
+		(-1, 0.3, 4.21),
+		(-6.15, 4.9, 0.77)]
+		
 	# run towards a point on the map
-	#angle=0.0
+	last_last=path[0][0]
+	
 	while not rospy.is_shutdown():
+		shuffle(path)
+		while last_last==path[0][0]:
+			shuffle(path)
+		last_last=path[-1][0]
+		
 		for point in path:
 			while last_tag_seen > rospy.get_time() - 2 \
 				or last_goal_succeeded > rospy.get_time() - (turning_after_goal+1):
@@ -208,4 +200,5 @@ if __name__ == '__main__':
 				rospy.loginfo(move_base.get_result())
 			rospy.loginfo('...got result.')
 			rospy.sleep(2.)
+
 		r.sleep()
