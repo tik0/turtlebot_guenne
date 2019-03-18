@@ -65,8 +65,11 @@ if __name__ == '__main__':
     goal.target_pose.header.frame_id = 'map'
     goal.target_pose.pose.orientation.w = 1.0
     # run towards a point on the map
-    x_list = [-1, 0, 2, 3, 7, 10 , 3, 7, 2, 5]
-    y_list = [-1,-6,-2,-4,-7,-4.5,-5,-6,-5,-1]
+    # x_list = [-1, 0, 2, 3, 7, 10 , 3, 7, 2, 5]  # kindergarten
+    # y_list = [-1,-6,-2,-4,-7,-4.5,-5,-6,-5,-1]
+
+    x_list = [-8.5,-8,-8,-6,-6 ,-5 ,-4,-3,-2,-2,-5.5, 0]   # europasaal
+    y_list = [   0, 2, 3, 4,2.5,5.5, 1, 2, 3, 1,-1.5, 0]
     clear_counter = 0
     distance_to_previous = 6
     
@@ -75,7 +78,6 @@ if __name__ == '__main__':
     distance_to_previous = euclidean_distance(
        				x_list[idx],
        				y_list[idx])
-
     while not rospy.is_shutdown():
 	while idx == past_idx[0] or idx==past_idx[1]:
 	    idx = np.random.choice(range(len(x_list)))
